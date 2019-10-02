@@ -56,36 +56,41 @@ public class Iphone {
 		WebElement itemCount = wait.until(
 				ExpectedConditions.visibilityOfElementLocated(By.xpath("//ul[contains(@class, 'list-items')]//li")));
 		int count = driver.findElements(By.xpath("//ul[contains(@class, 'list-items')]//li")).size();
+		int i = 0;
 		// checking in second page if page is not null
-		if (count != 0) {
+		if (count > i) {
+			for (i = 1; i < count; i++) {
+				WebElement ItemClick = wait.until(ExpectedConditions
+						.visibilityOfElementLocated(By.xpath("//ul[contains(@class, 'list-items')]//li[" + i
+								+ "]//div[contains(@class,'item-title-wrap')]//a")));
+				ItemClick.click();
 
-			WebElement ItemClick = wait.until(ExpectedConditions.visibilityOfElementLocated(By
-					.xpath("//ul[contains(@class, 'list-items')]//li[1]//div[contains(@class,'item-title-wrap')]//a")));
-			ItemClick.click();
+				// swtiching the control
 
-			// swtiching the control
+				for (String handle : driver.getWindowHandles()) {
 
-			for (String handle : driver.getWindowHandles()) {
+					driver.switchTo().window(handle);
+				}
+				WebElement ItemAvailable = wait.until(ExpectedConditions
+						.visibilityOfElementLocated(By.xpath("//div[contains(@class,'product-quantity-info')]//span")));
+				String noOfpiece = ItemAvailable.getText();
+				Pattern p = Pattern.compile("\\d+");
+				Matcher m = p.matcher(noOfpiece);
+				String dsd = m.toString();
+				int result = Integer.parseInt(dsd);
 
-				driver.switchTo().window(handle);
-			}
-			WebElement ItemAvailable = wait.until(ExpectedConditions
-					.visibilityOfElementLocated(By.xpath("//div[contains(@class,'product-quantity-info')]//span")));
-			String noOfpiece = ItemAvailable.getText();
-			Pattern p = Pattern.compile("\\d+");
-			Matcher m = p.matcher(noOfpiece);
-			String dsd = m.toString();
-			int result = Integer.parseInt(dsd);
+				if (result != 0) {
 
-			if (result != 0) {
+					System.out.println("This item is available for shipping");
+					driver.quit();
+				}
 
-				System.out.println("This item is available for shipping");
-				driver.quit();
-			}
+				else {
+					System.out.println("This item is not available for shipping");
+					i++;
 
-			else {
-				System.out.println("This item is not available for shipping");
-				driver.quit();
+				}
+
 			}
 
 		}
